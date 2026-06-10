@@ -6,59 +6,57 @@
 <title>Jogar para Aprender</title>
 
 <style>
-/* ===== BASE ===== */
 body{
     margin:0;
     font-family:Arial, sans-serif;
-    background:#0b1220;
+    background:#0f172a;
     color:white;
 }
 
-/* ===== HEADER ===== */
+/* HEADER */
 header{
     text-align:center;
     padding:30px;
-    background:#111c33;
-    border-bottom:2px solid #1f2a44;
+    background:#1e293b;
 }
 
 .logo{
-    width:110px;
+    width:120px;
     image-rendering:pixelated;
 }
 
-/* ===== GRID ===== */
+/* LAYOUT */
 .container{
     display:grid;
-    grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));
-    gap:18px;
-    padding:18px;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:20px;
+    padding:20px;
 }
 
-/* ===== CARDS ===== */
+/* CARDS */
 .card{
-    background:#111c33;
-    padding:16px;
-    border-radius:14px;
-    box-shadow:0 0 12px rgba(0,0,0,0.5);
+    background:#1e293b;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 0 10px rgba(0,0,0,.4);
 }
 
-/* ===== BUTTONS ===== */
+/* BOTÕES */
 button{
     padding:10px;
     margin:5px;
+    cursor:pointer;
     border:none;
     border-radius:8px;
-    background:#22304d;
+    background:#334155;
     color:white;
-    cursor:pointer;
 }
 
 button:hover{
-    background:#2f436a;
+    background:#475569;
 }
 
-/* ===== XP BAR ===== */
+/* XP BAR */
 .progress{
     width:100%;
     height:14px;
@@ -66,7 +64,7 @@ button:hover{
     border-radius:10px;
     overflow:hidden;
     margin-top:10px;
-    border:1px solid #22304d;
+    border:1px solid #334155;
 }
 
 .progress-bar{
@@ -76,15 +74,14 @@ button:hover{
     transition:0.3s;
 }
 
-/* ===== PERSONAGEM ===== */
+/* PERSONAGEM */
 .character{
-    font-size:48px;
+    font-size:50px;
     text-align:center;
-    margin:10px 0;
 }
 
-/* ===== LISTAS ===== */
-ol, ul{
+/* LISTAS */
+ul,ol{
     padding-left:18px;
 }
 </style>
@@ -96,7 +93,7 @@ ol, ul{
 <header>
     <img src="logo.png" class="logo">
     <h1>Jogar para Aprender</h1>
-    <p>Projeto educacional com gamificação</p>
+    <p>Projeto de gamificação educacional</p>
 </header>
 
 <div class="container">
@@ -139,10 +136,10 @@ ol, ul{
 
     <!-- PERFIL -->
     <div class="card">
-        <h2>👤 Perfil</h2>
+        <h2>👤 Perfil do Aluno</h2>
         <p>Nome: Jogador</p>
         <p>Status: Aprendiz</p>
-        <p>Nível atual: <span id="level2">2</span></p>
+        <p>Nível: <span id="level2">2</span></p>
     </div>
 
     <!-- MISSÕES -->
@@ -159,7 +156,7 @@ ol, ul{
 
 <script>
 
-/* ===== ESTADO DO JOGO ===== */
+/* ===== ESTADO ===== */
 let xp = 120;
 let level = 2;
 
@@ -176,7 +173,7 @@ function quiz(correto){
     update();
 }
 
-/* ===== UPDATE GERAL ===== */
+/* ===== UPDATE ===== */
 function update(){
 
     document.getElementById("xp").innerText = xp;
@@ -189,11 +186,11 @@ function update(){
     document.getElementById("level").innerText = level;
     document.getElementById("level2").innerText = level;
 
-    /* barra de XP */
+    // barra de progresso correta
     let percent = Math.min((xp / 200) * 100, 100);
     document.getElementById("bar").style.width = percent + "%";
 
-    /* missões */
+    // missões dinâmicas
     if(xp >= 200){
         document.getElementById("m2").innerText = "✔ Atingir 200 XP";
     }
