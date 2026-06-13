@@ -12,32 +12,27 @@ body{
     color:white;
     margin:0;
 }
-
 header{
     text-align:center;
     padding:30px;
     background:#1e293b;
 }
-
 .logo{
     width:120px;
     image-rendering:pixelated;
 }
-
 .container{
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
     gap:20px;
     padding:20px;
 }
-
 .card{
     background:#1e293b;
     padding:20px;
     border-radius:12px;
     box-shadow:0 0 10px rgba(0,0,0,.3);
 }
-
 button{
     padding:10px;
     margin:5px;
@@ -47,11 +42,9 @@ button{
     background:#334155;
     color:white;
 }
-
 button:hover{
     background:#475569;
 }
-
 .barra-xp{
     width:100%;
     height:12px;
@@ -60,7 +53,6 @@ button:hover{
     margin-top:10px;
     overflow:hidden;
 }
-
 .xp-preenchido{
     height:100%;
     width:0%;
@@ -70,7 +62,6 @@ button:hover{
 </style>
 
 </head>
-
 <body>
 
 <header>
@@ -81,9 +72,10 @@ button:hover{
 
 <div class="container">
 
-<!-- PERFIL -->
 <div class="card">
 <h2>👤 Perfil</h2>
+
+<p><b>Jogador:</b> <span id="nomeJogador"></span></p>
 
 <p><b>Nível:</b> <span id="nivel">1</span></p>
 <p><b>XP:</b> <span id="xp">0</span>/100</p>
@@ -94,9 +86,13 @@ button:hover{
 
 <p><b>Pontos:</b> <span id="pontos">0</span></p>
 <p><b>Perguntas:</b> <span id="respondidas">0</span></p>
+
+<button onclick="trocarJogador()">
+🔄 Trocar Jogador
+</button>
+
 </div>
 
-<!-- QUIZ -->
 <div class="card" id="quiz">
 <h2>💻 Quiz de Programação</h2>
 
@@ -105,15 +101,14 @@ button:hover{
 <div id="opcoes"></div>
 
 <div id="resultado"></div>
+
 </div>
 
-<!-- RANKING -->
 <div class="card">
 <h2>🏆 Ranking</h2>
 <ol id="rankingLista"></ol>
 </div>
 
-<!-- ESTATÍSTICAS -->
 <div class="card">
 <h2>📊 Estatísticas</h2>
 <p>Acertos: <span id="acertos">0</span></p>
@@ -124,6 +119,7 @@ button:hover{
 </div>
 
 <script>
+
 const perguntas = [
 {
 pergunta:"O que é programação?",
@@ -152,6 +148,11 @@ correta:0
 }
 ];
 
+function trocarJogador(){
+localStorage.removeItem("nome");
+location.reload();
+}
+
 perguntas.sort(() => Math.random() - 0.5);
 
 let i = 0;
@@ -164,15 +165,21 @@ let acertos = 0;
 let erros = 0;
 
 let nome = localStorage.getItem("nome") || prompt("Seu nome:");
+
 localStorage.setItem("nome", nome);
 
-let ranking = JSON.parse(localStorage.getItem("ranking")) || [];
-
+let ranking =
+JSON.parse(localStorage.getItem("ranking")) || [];
 function salvar(){
-localStorage.setItem("ranking", JSON.stringify(ranking));
+localStorage.setItem(
+"ranking",
+JSON.stringify(ranking)
+);
 }
 
 function atualizar(){
+
+document.getElementById("nomeJogador").innerText = nome;
 
 document.getElementById("xp").innerText = xp;
 document.getElementById("nivel").innerText = nivel;
@@ -182,17 +189,26 @@ document.getElementById("respondidas").innerText = respondidas;
 document.getElementById("acertos").innerText = acertos;
 document.getElementById("erros").innerText = erros;
 
-let taxa = respondidas ? Math.round((acertos/respondidas)*100) : 0;
-document.getElementById("taxa").innerText = taxa + "%";
+let taxa =
+respondidas
+? Math.round((acertos/respondidas)*100)
+: 0;
 
-document.getElementById("barraXp").style.width = xp + "%";
+document.getElementById("taxa").innerText =
+taxa + "%";
+
+document.getElementById("barraXp").style.width =
+Math.min(xp,100) + "%";
 }
 
 function mostrar(){
 
-document.getElementById("pergunta").innerText = perguntas[i].pergunta;
+document.getElementById("pergunta").innerText =
+perguntas[i].pergunta;
 
-let op = document.getElementById("opcoes");
+let op =
+document.getElementById("opcoes");
+
 op.innerHTML = "";
 
 perguntas[i].opcoes.forEach((o,idx)=>{
@@ -200,6 +216,7 @@ perguntas[i].opcoes.forEach((o,idx)=>{
 let b = document.createElement("button");
 b.innerText = o;
 b.onclick = () => responder(idx);
+
 op.appendChild(b);
 
 });
@@ -216,17 +233,21 @@ xp += 40;
 pontos += 10;
 acertos++;
 
-document.getElementById("resultado").innerHTML = "✔ Correto! +10 pontos";
+document.getElementById("resultado").innerHTML =
+"✅ Correto! +10 pontos";
 
 }else{
 
 erros++;
-document.getElementById("resultado").innerHTML = "❌ Errado!";
+
+document.getElementById("resultado").innerHTML =
+"❌ Errado!";
+
 }
 
 if(xp >= 100){
 nivel++;
-xp = xp - 100;
+xp -= 100;
 }
 
 i++;
@@ -238,9 +259,20 @@ fim();
 }
 
 atualizar();
+
 }
 
 function fim(){
+
+const existente =
+ranking.find(j => j.nome === nome);
+
+if(existente){
+
+existente.pontos = pontos;
+existente.nivel = nivel;
+
+}else{
 
 ranking.push({
 nome:nome,
@@ -248,29 +280,57 @@ pontos:pontos,
 nivel:nivel
 });
 
-ranking.sort((a,b)=>b.pontos-a.pontos);
+}
+
+ranking.sort(
+(a,b)=>b.pontos-a.pontos
+);
 
 salvar();
+
+carregarRanking();
+
+document.getElementById("quiz").innerHTML = `
+<h2>🏁 Fim do Jogo</h2>
+
+<p>${nome}</p>
+
+<p>Pontos: ${pontos}</p>
+
+<p>Nível: ${nivel}</p>
+
+<button onclick="location.reload()">
+Jogar novamente
+</button>
+`;
+
+}
+
+function carregarRanking(){
 
 let html = "";
 
 ranking.slice(0,10).forEach(p=>{
-html += `<li>${p.nome} - ${p.pontos} pts (Nível ${p.nivel})</li>`;
+
+html += `
+<li>
+${p.nome}
+ - ${p.pontos} pts
+ (Nível ${p.nivel})
+</li>
+`;
+
 });
 
-document.getElementById("rankingLista").innerHTML = html;
+document.getElementById("rankingLista").innerHTML =
+html;
 
-document.getElementById("quiz").innerHTML = `
-<h2>🏁 Fim do Jogo</h2>
-<p>${nome}</p>
-<p>Pontos: ${pontos}</p>
-<p>Nível: ${nivel}</p>
-<button onclick="location.reload()">Jogar novamente</button>
-`;
 }
 
+carregarRanking();
 mostrar();
 atualizar();
+
 </script>
 
 </body>
